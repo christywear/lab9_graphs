@@ -13,6 +13,7 @@ namespace DGraphClasses
     {
         public int endIndex = Int32.MaxValue; // end of the edge
         public Edge next = null; // null edge next ptr
+        public int weight = -1; // weight of this edge
     }
 
     public class DGraph //graph class, this one has edgelists and connection matrix
@@ -20,7 +21,7 @@ namespace DGraphClasses
         private const int SIZE = 20; // set int size
         private int numNodes = 0; // set nodes
         private Node[] nodeList = new Node[SIZE]; // nodelist
-        private bool[,] edgeMatrix = new bool[SIZE,SIZE]; // set edge matrix
+        private int[,] edgeMatrix = new int[SIZE, SIZE];// set edge matrix
 
         //private methods
         //linear search for node return -1 if not found otherwise return it's index
@@ -62,7 +63,7 @@ namespace DGraphClasses
             
         }
 
-        public bool AddEdge(char starts, char ends)
+        public bool AddEdge(char starts, char ends, int weight=1)
         {
             // return false if link to self
             if (starts == ends)
@@ -73,11 +74,12 @@ namespace DGraphClasses
             if (startIndex == -1 || endIndex == -1)
                 return false;
             // set the link in the edgeMatrix
-            edgeMatrix[startIndex,endIndex] = true;
+            edgeMatrix[startIndex,endIndex] = weight;
             // create a new edge and add
             // to the start node’s list of edges
             Edge startEnd = new Edge();
             startEnd.endIndex = endIndex;
+            startEnd.weight = weight;
             startEnd.next = nodeList[startIndex].connections;
             nodeList[startIndex].connections = startEnd;
 
@@ -105,7 +107,7 @@ namespace DGraphClasses
                 Edge ptr = nodeList[i].connections; // set ptr
                 while(ptr != null)
                 {
-                    returnlist.Append(nodeList[ptr.endIndex].name.ToString() + " "); // append ptr
+                    returnlist.Append(nodeList[ptr.endIndex].name.ToString() + "[" + ptr.weight + "] "); // add to string
                     ptr = ptr.next; // move ptr to next
                 }
                 returnlist.Append("\n"); // new line
@@ -131,9 +133,9 @@ namespace DGraphClasses
                 for (int j = 0; j < numNodes;j++)
                 {
 
-                    if(edgeMatrix[i,j]) // check for true
+                    if(edgeMatrix[i,j] > 0) // check for true
                     {
-                        output.Append(1 + " "); // add true or 1
+                        output.Append(edgeMatrix[i, j] + " ");// add true or 1
                     }
                     else
                     {
@@ -204,11 +206,20 @@ namespace DGraphClasses
         public string ConnectTable()
         {
             System.Text.StringBuilder output = new System.Text.StringBuilder(); // make new string
-            foreach (Node c in nodeList) // start iterating through nodes in node list.
+            for(int i = 0; i< SIZE; i++) // start iterating through matrix.
             {
-                if (c != null) // if it's not null still have more to go
+                if (nodeList[i] != null)
                 {
-                    output.Append(BreadthFirst(c.name)); // append the route for this breathfirst search
+                    output.Append(nodeList[i].name + ": ");
+                    for (int j = 0; j < SIZE; j++)
+                    {
+                        if (edgeMatrix[i, j] != 0) // if it's not zero 
+                        {
+                            output.Append(nodeList[j].name + "["+ edgeMatrix[i, j] + "] "); // append the node + weight
+
+                        }
+                       
+                    }
                     output.Append("\n");
                 }
                 

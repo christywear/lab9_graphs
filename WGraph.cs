@@ -23,7 +23,7 @@ namespace WGraphClasses
         private const int SIZE = 20;// set int size
         private int numNodes = 0;// set nodes
         private Node[] nodeList = new Node[SIZE];// nodelist
-        private bool[,] edgeMatrix = new bool[SIZE, SIZE];// set edge matrix
+        private int[,] edgeMatrix = new int[SIZE, SIZE];// set edge matrix
 
         //private methods
         private int FindNode(char name)
@@ -73,7 +73,7 @@ namespace WGraphClasses
             if (startIndex == -1 || endIndex == -1)
                 return false;
             // set the link in the edgeMatrix
-            edgeMatrix[startIndex, endIndex] = true;
+            edgeMatrix[startIndex, endIndex] = weight;
             // create a new edge and add
             // to the start node’s list of edges
             Edge startEnd = new Edge();
@@ -106,7 +106,7 @@ namespace WGraphClasses
                 Edge ptr = nodeList[i].connections; //switch ptr to node's connection
                 while (ptr != null) // while this ptr isn't null
                 {
-                    returnlist.Append(nodeList[ptr.endIndex].name.ToString() + " "); // add to string
+                    returnlist.Append(nodeList[ptr.endIndex].name.ToString() + "["+ptr.weight+"] "); // add to string
                     ptr = ptr.next; // switch to next ptr
                 }
                 returnlist.Append("\n"); // add spacing
@@ -129,9 +129,9 @@ namespace WGraphClasses
                 for (int j = 0; j < numNodes; j++)
                 {
 
-                    if (edgeMatrix[i, j])
+                    if (edgeMatrix[i, j] > 0)
                     {
-                        output.Append(1 + " ");// add true or 1
+                        output.Append(edgeMatrix[i,j] + " ");// add true or 1
                     }
                     else
                     {
@@ -201,14 +201,23 @@ namespace WGraphClasses
         public string ConnectTable()
         {
             System.Text.StringBuilder output = new System.Text.StringBuilder(); // make new string
-            foreach (Node c in nodeList) // start iterating through nodes in node list.
+            for (int i = 0; i < SIZE; i++) // start iterating through matrix .
             {
-                if (c != null) // if it's not null still have more to go
+                if (nodeList[i] != null)
                 {
-                    output.Append(BreadthFirst(c.name)); // append the route for this breathfirst search
+                    output.Append(nodeList[i].name + ": ");
+                    for (int j = 0; j < SIZE; j++)
+                    {
+                        if (edgeMatrix[i, j] != 0) // if it's not 0 
+                        {
+                            output.Append(nodeList[j].name + "[" + edgeMatrix[i, j] + "] "); // append the name + weight
+
+                        }
+
+                    }
                     output.Append("\n");
                 }
-                
+
             }
             return output.ToString(); // spit out what went into string
         }
