@@ -1,0 +1,13 @@
+D:\classxis\Fall2020\cs260\week_9\Lab9\obj\Debug\netcoreapp3.1\Lab9.csprojAssemblyReference.cache
+D:\classxis\Fall2020\cs260\week_9\Lab9\obj\Debug\netcoreapp3.1\Lab9.AssemblyInfoInputs.cache
+D:\classxis\Fall2020\cs260\week_9\Lab9\obj\Debug\netcoreapp3.1\Lab9.AssemblyInfo.cs
+D:\classxis\Fall2020\cs260\week_9\Lab9\obj\Debug\netcoreapp3.1\Lab9.csproj.CoreCompileInputs.cache
+D:\classxis\Fall2020\cs260\week_9\Lab9\bin\Debug\netcoreapp3.1\Lab9.exe
+D:\classxis\Fall2020\cs260\week_9\Lab9\bin\Debug\netcoreapp3.1\Lab9.deps.json
+D:\classxis\Fall2020\cs260\week_9\Lab9\bin\Debug\netcoreapp3.1\Lab9.runtimeconfig.json
+D:\classxis\Fall2020\cs260\week_9\Lab9\bin\Debug\netcoreapp3.1\Lab9.runtimeconfig.dev.json
+D:\classxis\Fall2020\cs260\week_9\Lab9\bin\Debug\netcoreapp3.1\Lab9.dll
+D:\classxis\Fall2020\cs260\week_9\Lab9\bin\Debug\netcoreapp3.1\Lab9.pdb
+D:\classxis\Fall2020\cs260\week_9\Lab9\obj\Debug\netcoreapp3.1\Lab9.dll
+D:\classxis\Fall2020\cs260\week_9\Lab9\obj\Debug\netcoreapp3.1\Lab9.pdb
+D:\classxis\Fall2020\cs260\week_9\Lab9\obj\Debug\netcoreapp3.1\Lab9.genruntimeconfig.cache
