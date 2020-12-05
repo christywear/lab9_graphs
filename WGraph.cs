@@ -201,6 +201,13 @@ namespace WGraphClasses
         public string ConnectTable()
         {
             System.Text.StringBuilder output = new System.Text.StringBuilder(); // make new string
+            output.Append(Warshall());
+            return output.ToString(); // spit out what went into string
+        }
+
+        public string Warshall()
+        {
+            System.Text.StringBuilder output = new System.Text.StringBuilder(); // make new string
             for (int i = 0; i < SIZE; i++) // start iterating through matrix .
             {
                 if (nodeList[i] != null)
@@ -208,20 +215,27 @@ namespace WGraphClasses
                     output.Append(nodeList[i].name + ": ");
                     for (int j = 0; j < SIZE; j++)
                     {
-                        if (edgeMatrix[i, j] != 0) // if it's not 0 
+                        if (edgeMatrix[i, j] != 0) // if it's not 0 in this row 
                         {
-                            output.Append(nodeList[j].name + "[" + edgeMatrix[i, j] + "] "); // append the name + weight
-
+                            int count = 0;
+                            for (int k = 0; k < SIZE; k++) // check column
+                            {
+                                if (edgeMatrix[j, k] > 0) // if its also here.. 
+                                {
+                                    count++; // inc count
+                                }
+                            }
+                            if (count > 1) // if count shows more than one connection
+                            {
+                                output.Append(nodeList[j].name + "[" + edgeMatrix[i, j] + "] "); // append the name + weight
+                            }
                         }
-
                     }
                     output.Append("\n");
                 }
-
             }
             return output.ToString(); // spit out what went into string
         }
-
         public string MinCostTree(char value) // mincosttree
         {
             ResetVisited();
