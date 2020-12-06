@@ -159,42 +159,28 @@ namespace DGraphClasses
             Edge ptr = tempNode.connections;
             do
             {
-                if (ptr != null && nodeList[ptr.endIndex].visited == false) // check if visited or end of ptr list
+                if (tempFifo.Count != 0)
                 {
-                    if (tempFifo.Count != 0)
-                    {
-                        tempNode = (Node)tempFifo.Dequeue();
-                    }
-                    output.Append(tempNode.name + "-" + nodeList[ptr.endIndex].name + " "); // append output str, startchar - next char in ptr
-                    tempNode.visited = true; // mark as visited
-                    tempFifo.Enqueue(nodeList[ptr.endIndex]); // add node to fifo
-                    
+                    tempNode = (Node)tempFifo.Dequeue();
+                    ptr = tempNode.connections; // set ptr equal to this nodes first edge
+                }
+
+                if (ptr != null) // check if visited or end of ptr list
+                {
                     while(ptr != null)
-                    {
+                    {   
                         if (nodeList[ptr.endIndex].visited != true)
                         {
                             nodeList[ptr.endIndex].visited = true;
+                            output.Append(tempNode.name + "-" + nodeList[ptr.endIndex].name + "["+ptr.weight+"] "); // append output str, startchar - next char in ptr
                             tempFifo.Enqueue(nodeList[ptr.endIndex]);
                             
                         }
                         ptr = ptr.next; // move to next one.
-                    }
-                    
+                    }  
                 }
-                else // if has visited this node, or ptr is null
-                {
-                    if (tempFifo.Count != 0) // if fifo is not empty
-                    {
-                        tempNode = (Node)tempFifo.Dequeue(); // pop from fifo, assign to tempnode to move to next ptr branch
-                       
-                        ptr = tempNode.connections; // set ptr equal to this nodes first edge
-                    }
-                }
-               
-
             } while (tempFifo.Count != 0); // while fifo is not empty
-            
-                return output.ToString(); // return finished string
+         return output.ToString(); // return finished string
         }
         
         public string DepthFirst(char name) // stub not used yet
@@ -206,40 +192,19 @@ namespace DGraphClasses
         public string ConnectTable()
         {
             System.Text.StringBuilder output = new System.Text.StringBuilder(); // make new string
-            output.Append(Warshall());
-            return output.ToString(); // spit out what went into string
-        }
-
-        public string Warshall()
-        {
-            System.Text.StringBuilder output = new System.Text.StringBuilder(); // make new string
-            for (int i = 0; i < SIZE; i++) // start iterating through matrix .
+            for (int i = 0; i < SIZE; i++)
             {
+                
                 if (nodeList[i] != null)
                 {
                     output.Append(nodeList[i].name + ": ");
-                    for (int j = 0; j < SIZE; j++)
-                    {
-                        if (edgeMatrix[i, j] != 0) // if it's not 0 in this row 
-                        {
-                            int count = 0;
-                            for (int k = 0; k < SIZE; k++) // check column
-                            {
-                                if (edgeMatrix[j, k] > 0) // if its also here.. 
-                                {
-                                    count++; // inc count
-                                }
-                            }
-                            if (count > 1) // if count shows more than one connection
-                            {
-                                output.Append(nodeList[j].name + "[" + edgeMatrix[i, j] + "] "); // append the name + weight
-                            }
-                        }
-                    }
+                    output.Append(BreadthFirst(nodeList[i].name));
                     output.Append("\n");
                 }
+               
             }
             return output.ToString(); // spit out what went into string
+
         }
 
         //find what nodes are connected to whatever node char is sent in using matrix

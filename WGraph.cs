@@ -1,4 +1,5 @@
 ﻿using System;
+using PriorityQ;
 
 namespace WGraphClasses
 {
@@ -22,8 +23,10 @@ namespace WGraphClasses
     {
         private const int SIZE = 20;// set int size
         private int numNodes = 0;// set nodes
-        private Node[] nodeList = new Node[SIZE];// nodelist
+        public Node[] nodeList = new Node[SIZE];// nodelist
         private int[,] edgeMatrix = new int[SIZE, SIZE];// set edge matrix
+
+        public Node NodeList(int ind) { return nodeList[ind]; }
 
         //private methods
         private int FindNode(char name)
@@ -77,7 +80,7 @@ namespace WGraphClasses
             // create a new edge and add
             // to the start node’s list of edges
             Edge startEnd = new Edge();
-            startEnd.startIndex = starts;
+            startEnd.startIndex = FindNode(starts);
             startEnd.endIndex = endIndex;
             startEnd.weight = weight;
             startEnd.next = nodeList[startIndex].connections;
@@ -144,7 +147,7 @@ namespace WGraphClasses
             return output.ToString();// return string
         }
 
-        public string BreadthFirst(char start)//remove from fifo visit neighbors
+        public string BreadthFirst(char start) //remove from fifo visit neighbors
         {
             ResetVisited(); // reset visited
             System.Text.StringBuilder output = new System.Text.StringBuilder(); // make string
@@ -155,119 +158,108 @@ namespace WGraphClasses
             Edge ptr = tempNode.connections;
             do
             {
-                if (ptr != null && nodeList[ptr.endIndex].visited == false) // check if visited or end of ptr list
+                if (tempFifo.Count != 0)
                 {
-                    if (tempFifo.Count != 0)
-                    {
-                        tempNode = (Node)tempFifo.Dequeue();
-                    }
-                    output.Append(nodeList[ptr.endIndex].name + " "); // append output str, startchar - next char in ptr
-                    tempNode.visited = true; // mark as visited
-                    tempFifo.Enqueue(nodeList[ptr.endIndex]); // add node to fifo
+                    tempNode = (Node)tempFifo.Dequeue();
+                    ptr = tempNode.connections; // set ptr equal to this nodes first edge
+                }
 
+                if (ptr != null) // check if visited or end of ptr list
+                {
                     while (ptr != null)
                     {
                         if (nodeList[ptr.endIndex].visited != true)
                         {
                             nodeList[ptr.endIndex].visited = true;
+                            output.Append(tempNode.name + "-" + nodeList[ptr.endIndex].name + "[" + ptr.weight + "] "); // append output str, startchar - next char in ptr
                             tempFifo.Enqueue(nodeList[ptr.endIndex]);
 
                         }
                         ptr = ptr.next; // move to next one.
                     }
-
                 }
-                else // if has visited this node, or ptr is null
-                {
-                    if (tempFifo.Count != 0) // if fifo is not empty
-                    {
-                        tempNode = (Node)tempFifo.Dequeue(); // pop from fifo, assign to tempnode to move to next ptr branch
-
-                        ptr = tempNode.connections; // set ptr equal to this nodes first edge
-                    }
-                }
-
-
             } while (tempFifo.Count != 0); // while fifo is not empty
-
             return output.ToString(); // return finished string
         }
 
-        public string DepthFirst(char name)// stub not used yet
+        public string DepthFirst(char name) // stub not used yet
         {
             return "this is a stub";
         }
+
         //show what nodes is connected to this node
         public string ConnectTable()
         {
             System.Text.StringBuilder output = new System.Text.StringBuilder(); // make new string
-            output.Append(Warshall());
-            return output.ToString(); // spit out what went into string
-        }
-
-        public string Warshall()
-        {
-            System.Text.StringBuilder output = new System.Text.StringBuilder(); // make new string
-            for (int i = 0; i < SIZE; i++) // start iterating through matrix .
+            for (int i = 0; i < SIZE; i++)
             {
+
                 if (nodeList[i] != null)
                 {
                     output.Append(nodeList[i].name + ": ");
-                    for (int j = 0; j < SIZE; j++)
-                    {
-                        if (edgeMatrix[i, j] != 0) // if it's not 0 in this row 
-                        {
-                            int count = 0;
-                            for (int k = 0; k < SIZE; k++) // check column
-                            {
-                                if (edgeMatrix[j, k] > 0) // if its also here.. 
-                                {
-                                    count++; // inc count
-                                }
-                            }
-                            if (count > 1) // if count shows more than one connection
-                            {
-                                output.Append(nodeList[j].name + "[" + edgeMatrix[i, j] + "] "); // append the name + weight
-                            }
-                        }
-                    }
+                    output.Append(BreadthFirst(nodeList[i].name));
                     output.Append("\n");
                 }
+
             }
             return output.ToString(); // spit out what went into string
+
         }
+
+
         public string MinCostTree(char value) // mincosttree
         {
             ResetVisited();
             System.Text.StringBuilder output = new System.Text.StringBuilder(); // string
-            System.Collections.Queue tempFifo = new System.Collections.Queue(); // queue
-            int count = 0; // int
-            Edge[] PQ = new Edge[SIZE]; // pq edge list
+            PriorityQueue PQ = new PriorityQueue(SIZE); // pq edge list
             Node tempnode = nodeList[FindNode(value)]; //assigns node found from value to tempnode
             tempnode.visited = true; // marks tempnode visited
             Edge ptr = tempnode.connections; // ptr
- 
-            
-            for (int i = 0; i < SIZE; i++) 
+            for(int k = 0; k < SIZE; k++)
             {
-
-                if (ptr != null)  // making sure ptr not null
+                
+                while(ptr != null)
                 {
-                    tempFifo.Enqueue(nodeList[ptr.endIndex]); // add this node from edge of nodelist to enqueue 
-                    output.Append(nodeList[FindNode(value)].name + "-" + nodeList[ptr.endIndex].name + " "); // add value's node - and next node into string
-                    nodeList[FindNode(value)].visited = true; // mark true
-                    PQ[i] = ptr; // assign edge ptr to pq
-                    ptr = ptr.next; // next ptr
+                    if(nodeList[ptr.startIndex].visited == false)
+                    {
+                        PQ.AddItem(ptr);
+                    }
+                    
+                    nodeList[ptr.startIndex].visited = true;      
+                    ptr = ptr.next;
+                }
+                if (nodeList[k] != null)
+                {
+                    tempnode = nodeList[k];
+                    ptr = tempnode.connections; // ptr
                 }
             }
-            // empties array into count
-            while (PQ[0] != null)
+            ResetVisited();
+            do
             {
-                count += PQ[0].weight;
-                PQ[0] = null;
-            }
-            
-            return output.ToString(); //outputs result
+                if (PQ.count() > 0)
+                {
+
+                    ptr = PQ.GetItem();
+                    
+                }
+
+                if (ptr != null) // check if visited or end of ptr list
+                {
+                    while (ptr != null)
+                    {
+                        if (nodeList[ptr.endIndex].visited == false)
+                        {
+                            nodeList[ptr.endIndex].visited = true;
+                            output.Append(nodeList[ptr.startIndex].name + "-" + nodeList[ptr.endIndex].name + "[" + ptr.weight + "] "); // append output str, startchar - next char in ptr
+                            PQ.AddItem(ptr.next);
+                        }
+                        ptr = ptr.next; // move to next one.
+                    }
+                }
+            } while (PQ.count() > 0); // while fifo is not empty
+            return output.ToString(); // return finished string
+        
         }
     }
 }
